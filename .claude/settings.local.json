@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(.venv/Scripts/python -c \"from src.analysis.detector import accident_detector_chain; print\\(''analysis.detector OK''\\)\")",
+      "Bash(.venv/Scripts/python -c \"from src.analysis.detail_analyzer import accident_detail_chain; print\\(''analysis.detail_analyzer OK''\\)\")",
+      "Bash(.venv/Scripts/python:*)",
+      "Bash(dir /s /b \"C:\\\\Project\\\\toy\\\\car_accident_ai\\\\src\")"
+    ]
+  }
+}

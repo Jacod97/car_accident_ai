@@ -1,21 +1,7 @@
 import cv2
 from pathlib import Path
-from dataclasses import dataclass
 
-
-@dataclass
-class VideoMetadata:
-    """영상 메타데이터를 저장하는 데이터 클래스"""
-    file_path: str
-    file_name: str
-    file_size_mb: float
-    duration_seconds: float
-    duration_formatted: str
-    width: int
-    height: int
-    fps: float
-    total_frames: int
-    codec: str
+from src.models import VideoMetadata
 
 
 class VideoLoader:
@@ -42,22 +28,18 @@ class VideoLoader:
 
         cap = self._cap
 
-        # 기본 영상 속성 추출
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) 
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  
-        fps = cap.get(cv2.CAP_PROP_FPS)  
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        # 코덱 정보 추출 (fourcc 코드를 문자열로 변환)
         fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
         codec = "".join([chr((fourcc >> 8 * i) & 0xFF) for i in range(4)])
 
-        # 영상 길이 계산
         duration_seconds = total_frames / fps if fps > 0 else 0
         minutes, seconds = divmod(int(duration_seconds), 60)
         duration_formatted = f"{minutes:02d}:{seconds:02d}"
 
-        # 파일 크기 (MB 단위)
         file_size_mb = self.video_path.stat().st_size / (1024 * 1024)
 
         self._metadata = VideoMetadata(
@@ -73,20 +55,3 @@ class VideoLoader:
             codec=codec,
         )
         return self._metadata
-
-
-if __name__ == "__main__":
-    # 테스트 실행: data/mp4 폴더의 영상 메타데이터 출력
-    video_path = r"C:\Project\toy\car_accident_ai\data\mp4\bb_1_130209_vehicle_45_043.mp4"
-    loader = VideoLoader(video_path)
-
-    meta = loader.get_metadata()
-
-    print("file_size_mb:" ,meta.file_size_mb)
-    print("duration_seconds:" ,meta.duration_seconds)
-    print("duration_formatted:" ,meta.duration_formatted)
-    print("width:" ,meta.width)
-    print("height:" ,meta.height)
-    print("fps:" ,meta.fps)
-    print("total_frames:" ,meta.total_frames)
-    print("codec:" ,meta.codec)
